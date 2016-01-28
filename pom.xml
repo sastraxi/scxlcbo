@@ -10,21 +10,38 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spark-version>2.2</spark-version>
+        <spark-version>2.3</spark-version>
         <main-class>com.sastraxi.scxlcbo.Main</main-class>
     </properties>
 
     <dependencies>
+
+        <!-- Web server, framework, and templates -->
         <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
             <version>${spark-version}</version>
         </dependency>
         <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-template-freemarker</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- make RESTful requests -->
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.7</version>
+        </dependency>
+
+        <!-- store and retrieve data -->
+        <dependency>
             <groupId>com.rethinkdb</groupId>
             <artifactId>rethinkdb-driver</artifactId>
             <version>2.2-beta-1</version>
         </dependency>
+
     </dependencies>
 
     <build>
