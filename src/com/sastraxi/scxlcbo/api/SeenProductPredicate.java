@@ -6,6 +6,6 @@ package com.sastraxi.scxlcbo.api;
 @FunctionalInterface
 public interface SeenProductPredicate {
 
-    boolean test(int productNumber) throws Exception;
+    boolean test(long productNumber) throws Exception;
 
 }

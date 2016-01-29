@@ -1,6 +1,7 @@
 package com.sastraxi.scxlcbo.model;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 /**
  * Represents a beer at the local LCBO.
@@ -9,15 +10,17 @@ public class Beer {
 
     private static final BigDecimal fromCents = new BigDecimal("100.00");
 
-    private final int productNumber;
-    private final String name;
-    private final String style;
-    private final String tastingNote;
-    private final String imageURI;
-    private final int cadCents;
-    private final int mL;
+    private Long productNumber;
+    private String name;
+    private String style;
+    private String tastingNote;
+    private String imageURI;
+    private Long cadCents;
+    private Long mL;
 
-    public Beer(int productNumber, String name, String style, String tastingNote, String imageURI, int cadCents, int mL) {
+    public Beer() { }
+
+    public Beer(Long productNumber, String name, String style, String tastingNote, String imageURI, Long cadCents, Long mL) {
         this.productNumber = productNumber;
         this.name = name;
         this.style = style;
@@ -27,7 +30,7 @@ public class Beer {
         this.mL = mL;
     }
 
-    public int getProductNumber() {
+    public long getProductNumber() {
         return productNumber;
     }
 
@@ -51,11 +54,40 @@ public class Beer {
         return new BigDecimal(cadCents).divide(fromCents);
     }
 
-    public int getmL() {
+    public long getmL() {
         return mL;
     }
 
-    public int getCadCents() {
+    public long getCadCents() {
         return cadCents;
     }
+
+    public void setProductNumber(long productNumber) {
+        this.productNumber = productNumber;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public void setTastingNote(String tastingNote) {
+        this.tastingNote = tastingNote;
+    }
+
+    public void setImageURI(String imageURI) {
+        this.imageURI = imageURI;
+    }
+
+    public void setCadCents(Long cadCents) {
+        this.cadCents = cadCents;
+    }
+
+    public void setmL(Long mL) {
+        this.mL = mL;
+    }
+
 }

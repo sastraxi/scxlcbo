@@ -20,6 +20,8 @@ import java.util.stream.IntStream;
  */
 public class LcboApi {
 
+    public static final String DEFAULT_STYLE = "Beer";
+
     private final String authHeader;
     private final Random random;
 
@@ -57,7 +59,7 @@ public class LcboApi {
      * @return true if there is at least one of the product available at the store.
      * @throws ApiException upon any failure to communicate properly with the API.
      */
-    public boolean isProductAvailable(int storeId, int productNumber) throws ApiException {
+    public boolean isProductAvailable(int storeId, long productNumber) throws ApiException {
         try {
             HttpResponse<JsonNode> response = Unirest.get("http://lcboapi.com/stores/{store_id}/products/{product_id}/inventory")
                 .header("Authorization", authHeader)
@@ -131,7 +133,7 @@ public class LcboApi {
                 List<Integer> resultIndices = permutedRange(0, results.length() - 1);
                 for (int i: resultIndices) {
                     JSONObject result = results.getJSONObject(i);
-                    int productNumber = result.getInt("product_no");
+                    long productNumber = result.getInt("product_no");
                     boolean seenProduct = false;
 
                     // allow exceptions in our predicate; we'll bubble them up as API exceptions
@@ -147,14 +149,30 @@ public class LcboApi {
                             && !seenProduct
                             && isProductAvailable(storeId, productNumber))
                     {
+                        // sometimes style is in secondary; sometimes it's in tertiary;
+                        // sometimes it's not there at all...
+                        String style = result.optString("tertiary_category");
+                        if (style == null || style.trim().isEmpty()) {
+                            style = result.optString("secondary_category");
+                        }
+                        if (style == null || style.trim().isEmpty()) {
+                            style = DEFAULT_STYLE; // a sensible default for sure
+                        }
+
+                        // for some reason Sake keeps popping up in the beer category! exclude it.
+                        // TODO consider that this is a hack to make our results better
+                        if (style.equals("Sake / Rice Wine") || result.getString("name").endsWith(" Sake")) {
+                            continue;
+                        }
+
                         return new Beer(
                             productNumber,
                             result.getString("name"),
-                            result.optString("tertiary_category"),
+                            style,
                             result.optString("tasting_note"),
                             result.optString("image_url"),
-                            result.getInt("price_in_cents"),
-                            result.getInt("volume_in_milliliters")
+                            result.getLong("price_in_cents"),
+                            result.getLong("volume_in_milliliters")
                         );
                     }
                 }

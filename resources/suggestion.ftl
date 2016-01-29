@@ -10,10 +10,11 @@
         }
 
         #suggestion {
-            width: 1000px;
+            width: 800px;
             margin: 20px auto;
             height: 280px;
             position: relative;
+            left: -30px;
         }
 
             #suggestion .before {

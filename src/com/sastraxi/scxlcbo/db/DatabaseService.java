@@ -1,15 +1,10 @@
 package com.sastraxi.scxlcbo.db;
 
-import com.rethinkdb.net.Connection;
-import com.rethinkdb.net.Cursor;
 import com.sastraxi.scxlcbo.exception.DatabaseException;
 import com.sastraxi.scxlcbo.model.Beer;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.LinkedHashMap;
+import java.time.OffsetDateTime;
 import java.util.NavigableMap;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by sastr on 2016-01-28.
@@ -31,7 +26,7 @@ public interface DatabaseService {
      * @return true iff the given beer has been suggested before
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
-    public boolean isBeerInHistory(int productNumber) throws DatabaseException;
+    public boolean isBeerInHistory(long productNumber) throws DatabaseException;
 
     /**
      * Grab the history of suggested beers.
@@ -39,7 +34,7 @@ public interface DatabaseService {
      * @return a sorted (newest to oldest) map of timestamps (UTC; when the beer suggestion was made) to suggested beer
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
-    public NavigableMap<ZonedDateTime, Beer> getHistory() throws DatabaseException;
+    public NavigableMap<OffsetDateTime, Beer> getHistory() throws DatabaseException;
 
 
     /**

@@ -5,9 +5,15 @@ import com.rethinkdb.net.Connection;
 import com.rethinkdb.net.Cursor;
 import com.sastraxi.scxlcbo.exception.DatabaseException;
 import com.sastraxi.scxlcbo.model.Beer;
+import com.sun.scenario.effect.Offset;
+import org.json.JSONObject;
 
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeoutException;
@@ -58,7 +64,7 @@ public class DatabaseServiceRethink implements DatabaseService {
             Connection conn = getConnection();
 
             // we'll store all dates in UTC for sanity
-            ZonedDateTime utcTimestamp = ZonedDateTime.now(ZoneOffset.UTC);
+            OffsetDateTime utcTimestamp = OffsetDateTime.now(ZoneOffset.UTC);
 
             r.db(DATABASE).table(TABLE_HISTORY).insert(
                 r.hashMap(FIELD_PRODUCT_NUMBER, beer.getProductNumber())
@@ -82,7 +88,7 @@ public class DatabaseServiceRethink implements DatabaseService {
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
     @Override
-    public boolean isBeerInHistory(int productNumber) throws DatabaseException {
+    public boolean isBeerInHistory(long productNumber) throws DatabaseException {
         try {
             Connection conn = getConnection();
 
@@ -101,19 +107,32 @@ public class DatabaseServiceRethink implements DatabaseService {
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
     @Override
-    public NavigableMap<ZonedDateTime, Beer> getHistory() throws DatabaseException {
+    public NavigableMap<OffsetDateTime, Beer> getHistory() throws DatabaseException {
         try {
             Connection conn = getConnection();
 
             // all values from the history table in descending orer of the timestamp index
-            Cursor cursor = r.db(DATABASE).table(TABLE_HISTORY).orderBy().optArg("index", r.desc(FIELD_TIMESTAMP)).run(conn);
-            TreeMap<ZonedDateTime, Beer> results = new TreeMap<>();
-            for (Object record: cursor) {
-                // TODO actual implementation.
-                System.out.println(record);
+            ArrayList<HashMap> cursor = r.db(DATABASE).table(TABLE_HISTORY).orderBy().optArg("index", r.asc(FIELD_TIMESTAMP)).orderBy(FIELD_TIMESTAMP).run(conn, HashMap.class);
+            TreeMap<OffsetDateTime, Beer> results = new TreeMap<>();
+
+            // loop through the suggestions in the database.
+            for (int i = 0; i < cursor.size(); ++i) {
+                Object result = cursor.get(i);
+
+                JSONObject next = new JSONObject((HashMap) result);
+                results.put(OffsetDateTime.parse(next.getString(FIELD_TIMESTAMP), DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                    new Beer(
+                        next.getLong(FIELD_PRODUCT_NUMBER),
+                        next.getString("name"),
+                        next.getString("style"),
+                        null,
+                        null,
+                        next.getLong("cadCents"),
+                        next.getLong("mL")
+                    ));
             }
 
-            return results;
+            return results.descendingMap();
 
         } catch (TimeoutException e) {
             throw new DatabaseException(e.getMessage());

@@ -7,6 +7,7 @@ package com.sastraxi.scxlcbo;
 import com.sastraxi.scxlcbo.api.LcboApi;
 import com.sastraxi.scxlcbo.db.DatabaseService;
 import com.sastraxi.scxlcbo.db.DatabaseServiceMemory;
+import com.sastraxi.scxlcbo.db.DatabaseServiceRethink;
 import com.sastraxi.scxlcbo.exception.ApiException;
 import com.sastraxi.scxlcbo.model.Beer;
 import freemarker.cache.ClassTemplateLoader;
@@ -49,6 +50,7 @@ public class Main {
 
     // If you'd like to use RethinkDB in order to store historical beer entries between runs,
     // use the appropriate database service and make sure to call reset() on it before using!
+    // N.B. the CI server will replace this hostname with localhost!
     public static final String DB_HOSTNAME = "ec2-54-172-103-174.compute-1.amazonaws.com";
     public static final int DB_PORT = 28015;
 
@@ -63,12 +65,8 @@ public class Main {
 
         // our back-end
         LcboApi lcbo = new LcboApi(LCBO_API_KEY);
-        DatabaseService db = new DatabaseServiceMemory();
-
-        // Hello, world! Sanity.
-        get("/hello", (req, res) -> {
-            return "Hello World!";
-        });
+        DatabaseService db = new DatabaseServiceRethink(DB_HOSTNAME, DB_PORT);
+        //DatabaseService db = new DatabaseServiceMemory(); // doesn't require a database
 
         // Hi, Michelle! It's beer time! etc.
         get("/", (request, response) -> {
