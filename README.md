@@ -5,8 +5,8 @@ Notes on my solution:
 * I did not provide a mobile-ready layout for this webapp due to its limited use case; if Michelle is looking to have
   a beer after work on Friday, she is by definition at work when this desire strikes. Therefore, it's enough that
   she is able to interact with the site on her work computer.
-* I assume the viewer's browser window is at least 1000 pixels wide.
-* The LCBO APU used has some Sake products in the beer category; I've filtered these out.
+* I assume the viewer's browser window is at least 940 pixels wide.
+* The LCBO API used has some Sake products in the beer category; I've tried to filter these out.
 * By design, the database and API services know nothing about each other.
 * I have optimized the app in (slight) favour of a database that is quicker to respond than the API.
 
@@ -25,5 +25,7 @@ Ultimately, I think Spark has a lot of advantages over something like Spring for
 
 If I were to spend more time on this project, I would:
 
-* add a star rating system to the selection history, to help the user
-*
+* add a star rating system to the selection history, allowing the user to build a taste profile
+* add some basic level of authentication and provide a UI to wipe stats (currently the endpoint exists but is commented-out)
+* add some transitions between the pages
+
