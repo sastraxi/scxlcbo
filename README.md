@@ -1,5 +1,13 @@
 [![Build Status](https://travis-ci.org/sastraxi/scxlcbo.svg?branch=master)](https://travis-ci.org/sastraxi/scxlcbo)
 
+I assume anyone wanting to build/run this project has a working JDK 8 development environment.
+
+# clone this repostiory
+# import pom.xml as Maven Project into IntelliJ/Eclipse
+# optionally change DB configuration (by default, points to a RethinkDB instance on AWS)
+# run with entry point com.sastraxi.scxlcbo.Main
+# access http://localhost:4567/
+
 I used this project as an opportunity to explore different libraries, while staying in the Java ecosystem where I'm most comfortable.
 
 Notes on my solution:
@@ -30,4 +38,3 @@ If I were to spend more time on this project, I would:
 * add a star rating system to the selection history, allowing the user to build a taste profile
 * add some basic level of authentication and provide a UI to wipe stats (currently the endpoint exists but is commented-out)
 * add some transitions between the pages
-

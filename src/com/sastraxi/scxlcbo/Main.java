@@ -103,11 +103,14 @@ public class Main {
         });
 
         // Tear down/set up our database.
+        // TODO add basic auth + protect
+        /*
         get("/reset/yes_im_sure/everything_will_be_gone", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
             db.reset();
             return freeMarkerEngine.render(new ModelAndView(attributes, "resetComplete.ftl"));
         });
+        */
     }
 
 }
