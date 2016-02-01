@@ -9,6 +9,7 @@ import com.sun.scenario.effect.Offset;
 import org.json.JSONObject;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -120,7 +121,16 @@ public class DatabaseServiceRethink implements DatabaseService {
                 Object result = cursor.get(i);
 
                 JSONObject next = new JSONObject((HashMap) result);
-                results.put(OffsetDateTime.parse(next.getString(FIELD_TIMESTAMP), DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+
+                // this monstrosity grabs a date with an offset from the database
+                // and converts it into our local time zone.
+                // TODO probably use a ZonedDateTime instead of an OffsetDateTime in the abstract DatabaseService
+                OffsetDateTime localOffsetDateTime =
+                        ZonedDateTime.parse(next.getString(FIELD_TIMESTAMP), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                                .withZoneSameInstant(ZoneId.systemDefault())
+                                .toOffsetDateTime();
+
+                results.put(localOffsetDateTime,
                     new Beer(
                         next.getLong(FIELD_PRODUCT_NUMBER),
                         next.getString("name"),

@@ -102,8 +102,8 @@ public class LcboApi {
 
     /**
      *
-     * By passing in a predicate that tells us whether or not a candidaate beer can be chosen, we can reduce the
-     * number of
+     * By passing in a predicate that tells us whether or not a candidate beer can be chosen, we can reduce the
+     * number of pages visited before returning a valid beer.
      *
      * @param storeId
      * @param isProductNumberInHistory
@@ -160,8 +160,10 @@ public class LcboApi {
                         }
 
                         // for some reason Sake keeps popping up in the beer category! exclude it.
-                        // TODO consider that this is a hack to make our results better
-                        if (style.equals("Sake / Rice Wine") || result.getString("name").endsWith(" Sake")) {
+                        // FIXME consider that while this makes our results better, it is a hack
+                        if (style.equals("Sake / Rice Wine")
+                                || result.getString("name").endsWith(" Plum Wine")
+                                || result.getString("name").endsWith(" Sake")) {
                             continue;
                         }
 

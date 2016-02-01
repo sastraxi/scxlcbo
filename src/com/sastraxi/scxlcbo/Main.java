@@ -13,10 +13,10 @@ import com.sastraxi.scxlcbo.model.Beer;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import spark.ModelAndView;
+import spark.Spark;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import java.text.NumberFormat;
-import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -24,9 +24,9 @@ import java.util.Random;
 import static spark.Spark.get;
 public class Main {
 
-    public static final String GREETING_HTML = "Hi Michelle!";
+    public static final String GREETING_TEXT = "Hi Michelle!";
 
-    public static final String[] WELCOME_HTML = {
+    public static final String[] WELCOME_TEXT = {
         "... is it Friday already?",
         "Let me take you on a beer discovery journey.",
         "Did you know that the LCBO was established in 1927?",
@@ -34,14 +34,14 @@ public class Main {
         "Canada drank 2.3 billion litres of beer in 2012!"
     };
 
-    public static final String[] TRY_AGAIN_HTML = {
+    public static final String[] TRY_AGAIN_TEXT = {
         "Not feeling it?",
-        "This beer too \"2015\" for you?",
-        "I've got a good feeling about this next one...",
+        "That beer is so last year.",
+        "Huh, I thought that would be your style.",
         "Let's try that again...",
         "What's that? You'd rather drink water?",
         "Wrong side of the hop spectrum?",
-        "Not trappist enough for you?",
+        "Not \"trappist\" enough for you?"
     };
 
     // LCBO api key registered to sastraxi@gmail.com
@@ -66,14 +66,17 @@ public class Main {
         // our back-end
         LcboApi lcbo = new LcboApi(LCBO_API_KEY);
         DatabaseService db = new DatabaseServiceRethink(DB_HOSTNAME, DB_PORT);
-        //DatabaseService db = new DatabaseServiceMemory(); // doesn't require a database
+        // DatabaseService db = new DatabaseServiceMemory(); // doesn't require a database
+
+        // serve static files from /resources/public -> /
+        Spark.staticFileLocation("/public");
 
         // Hi, Michelle! It's beer time! etc.
         get("/", (request, response) -> {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("history", db.getHistory());
-            attributes.put("greeting", GREETING_HTML);
-            attributes.put("message", WELCOME_HTML[random.nextInt(WELCOME_HTML.length)]);
+            attributes.put("greeting", GREETING_TEXT);
+            attributes.put("message", WELCOME_TEXT[random.nextInt(WELCOME_TEXT.length)]);
             return freeMarkerEngine.render(new ModelAndView(attributes, "welcome.ftl"));
         });
 
@@ -85,9 +88,10 @@ public class Main {
                 if (randomBeer != null) { // if it's null, then no new beers are in stock! template handles it
                     db.addHistory(randomBeer);
                     attributes.put("beer", randomBeer);
-                    attributes.put("message", TRY_AGAIN_HTML[random.nextInt(TRY_AGAIN_HTML.length)]);
+                    attributes.put("message", TRY_AGAIN_TEXT[random.nextInt(TRY_AGAIN_TEXT.length)]);
                 }
                 attributes.put("history", db.getHistory().entrySet());
+                attributes.put("dateTimeFormatter", DateTimeFormatter.ofPattern("EEE, MMM d 'at' h:mm a"));
                 return freeMarkerEngine.render(new ModelAndView(attributes, "suggestion.ftl"));
 
             } catch (ApiException e) {

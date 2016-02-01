@@ -5,13 +5,29 @@
 
         body {
             margin: 0;
+            padding: 0;
             font-family: sans-serif;
             color: #333;
+
+
+
+            background-image: url('/images/background-600.png');
+            background-repeat: repeat-both;
+            background-attachment: fixed;
+
+        }
+
+        #suggestion-wrap {
+            box-shadow: 0px 3px 30px rgba(0, 0, 0, 0.15);
+            background: white;
+            min-height: 300px;
+            padding: 0px;
         }
 
         #suggestion {
+            padding: 25px 0px;
             width: 800px;
-            margin: 20px auto;
+            margin: 0px auto;
             height: 280px;
             position: relative;
             left: -30px;
@@ -26,6 +42,7 @@
             #suggestion img {
                 height: 300px;
                 float: left;
+                min-width: 200px;
             }
 
             #suggestion .image-placeholder {
@@ -59,32 +76,71 @@
                 font-style: italic;
             }
 
-            #try-again {
-                position: absolute;
-                right: 20px;
-                bottom: 20px;
+        #try-again {
+            margin: 0 auto;
+            display: block;
+            width: 250px;
+            z-index: 999;
+            position: relative; top: -50px;
+        }
+
+            #try-again .message {
+                text-align: center;
+                font-size: 80%;
+                display: block;
             }
 
-        #history-wrap {
-            clear: both;
-            margin-top: 20px;
-            padding: 20px;
+            #try-again > a {
+                display: block;
+                padding: 15px 5px;
+                margin: 15px 5px;
+                border: 1px solid rgba(25, 105, 30, 1.0);
+                background: rgba(30, 115, 37, 1.0);
+                color: white;
+                text-transform: uppercase;
+                text-align: center;
+                text-decoration: none;
+                transition: background-color 0.5s ease;
+                box-shadow: 0px 3px 30px rgba(0, 0, 0, 0.25);
+            }
 
-            background: #eee;
-            box-shadow: inset 0px 3px 15px rgba(0, 0, 0, 0.1);
+                #try-again > a:hover {
+                    background: rgba(40, 133, 43, 1.0);
+                }
+
+
+
+        #history-wrap {
+
+            margin-top: -90px;
+
+            clear: both;
+
+            padding: 20px;
         }
 
         #history {
             margin: 0 auto;
             border-spacing: 0;
             width: 900px;
+            padding: 10px 0px;
+
+            background-image: url('/images/background-600-blur.png');
+            background-repeat: repeat-both;
+            background-attachment: fixed;
+
+            box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.15);
+
         }
 
-            thead td {
-                text-align: center;
+            #history-wrap h2 {
                 font-size: 120%;
                 text-transform: uppercase;
-                padding-bottom: 10px;
+                width: 900px; margin: 0 auto;
+                margin-top: 2em;
+                margin-bottom: 0.5em;
+
+                color: rgba(70, 35, 17, 1.0);
             }
 
             tbody td {
@@ -101,23 +157,24 @@
 </head>
 <body>
     <#if beer??>
-        <div id="suggestion" data-product-number="#${beer.productNumber}">
-            <#if beer.imageURI?has_content>
-                <img src="${beer.imageURI}" />
-            <#else>
-                <div class="image-placeholder">
-                    No Image Available
-                </div>
-            </#if>
-            <div class="before">Why not try...</div>
-            <div class="beer-name">${beer.name}</div>
-            <div class="beer-style">#${beer.productNumber?c} - ${beer.style} - ${beer.mL} mL / ${(beer.cadPrice)?string.currency}</div>
-            <p>${beer.tastingNote}</p>
-
-            <div id="try-again">
-                <span>${message}</span>
-                <a href="/suggest">Another One</a>
+        <div id="suggestion-wrap">
+            <div id="suggestion" data-product-number="#${beer.productNumber}">
+                <#if beer.imageURI?has_content>
+                    <img src="${beer.imageURI}" />
+                <#else>
+                    <div class="image-placeholder">
+                        No Image Available
+                    </div>
+                </#if>
+                <div class="before">Why not try...</div>
+                <div class="beer-name">${beer.name}</div>
+                <div class="beer-style">#${beer.productNumber?c} - ${beer.style} - ${beer.mL} mL / ${(beer.cadPrice)?string.currency}</div>
+                <p>${beer.tastingNote}</p>
             </div>
+        </div>
+        <div id="try-again">
+            <span class="message">${message}</span>
+            <a href="/suggest">Another One</a>
         </div>
     <#else>
         <p>There are no beers in stock at your local LCBO that I haven't already suggested!</p>
@@ -125,17 +182,13 @@
 
     <#if history?has_content>
         <div id="history-wrap">
+            <h2>Suggestion History</h2>
             <table id="history">
-                <thead>
-                    <td colspan="4">
-                        Suggestion History
-                    </td>
-                </thead>
                 <tbody>
                     <#list history as entry>
                         <#assign beer = entry.value/>
                         <tr>
-                            <td>${entry.key}</td>
+                            <td>${entry.key.format(dateTimeFormatter)}</td>
                             <td>${beer.name}</td>
                             <td>${beer.style}</td>
                             <td class="price">${beer.mL} mL / ${(beer.cadPrice)?string.currency}</td>

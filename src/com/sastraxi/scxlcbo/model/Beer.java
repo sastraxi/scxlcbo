@@ -1,7 +1,6 @@
 package com.sastraxi.scxlcbo.model;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 /**
  * Represents a beer at the local LCBO.

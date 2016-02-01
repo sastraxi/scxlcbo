@@ -15,11 +15,15 @@ I had never used Spark, Freemarker, Unirest, or RethinkDB before. Some thoughts:
 * Spark has no surprises so far. It's good at what it does.
 * Similarly, Unirest is perfect for a simple API client.
 * Freemarker (the templating engine used) needs to be updated for Java 8. In particular, it does not have the support
-  for the Java 8 date primitive (OffsetDateTime) that I wanted to use. As a result, I'm converting to the deprecated
-  DateTime type before passing datetimes to the view.
-  local time zone so that Freemarker
+  for the Java 8 date primitives (Zoned/OffsetDateTime) that I wanted to use. As a result, I have to pass in a
+  date/time formatter and bypass the template engine's date/time support.
 * RethinkDB does not have a very Java-like API at all; its design means we can't have statically-defined types
   and relies on the user to know the return type of each API call. These types aren't stated anywhere in the API,
   except perhaps implicitly.
 
 Ultimately, I think Spark has a lot of advantages over something like Spring for a small app like this (built-in web server; no XML configuration). Unirest seems like the consummate simple HTTP library. I don't think I'd use RethinkDB or Freemarker again.
+
+If I were to spend more time on this project, I would:
+
+* add a star rating system to the selection history, to help the user
+*
