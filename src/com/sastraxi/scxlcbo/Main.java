@@ -50,7 +50,6 @@ public class Main {
 
     // If you'd like to use RethinkDB in order to store historical beer entries between runs,
     // use the appropriate database service and make sure to call reset() on it before using!
-    // N.B. the CI server will replace this hostname with localhost!
     public static final String DB_HOSTNAME = "ec2-54-172-103-174.compute-1.amazonaws.com";
     public static final int DB_PORT = 28015;
 
