@@ -4,7 +4,7 @@ I assume anyone wanting to build/run this project has a working JDK 8 developmen
 
 * clone this repostiory
 * import pom.xml as Maven Project into IntelliJ/Eclipse
-* optionally change DB configuration (by default, points to a RethinkDB instance on AWS)
+* optionally change DB configuration; see commented-out line in Main.java (by default, points to a RethinkDB instance on AWS)
 * run with entry point com.sastraxi.scxlcbo.Main
 * access http://localhost:4567/
 
