@@ -35,6 +35,7 @@ Ultimately, I think Spark has a lot of advantages over something like Spring for
 
 If I were to spend more time on this project, I would:
 
+* further configure travis CI to build+deploy the app onto an EC2 instance
 * add a star rating system to the selection history, allowing the user to build a taste profile
 * add some basic level of authentication and provide a UI to wipe stats (currently the endpoint exists but is commented-out)
 * add some transitions between the pages
