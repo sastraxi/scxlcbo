@@ -2,11 +2,11 @@
 
 I assume anyone wanting to build/run this project has a working JDK 8 development environment.
 
-# clone this repostiory
-# import pom.xml as Maven Project into IntelliJ/Eclipse
-# optionally change DB configuration (by default, points to a RethinkDB instance on AWS)
-# run with entry point com.sastraxi.scxlcbo.Main
-# access http://localhost:4567/
+* clone this repostiory
+* import pom.xml as Maven Project into IntelliJ/Eclipse
+* optionally change DB configuration (by default, points to a RethinkDB instance on AWS)
+* run with entry point com.sastraxi.scxlcbo.Main
+* access http://localhost:4567/
 
 I used this project as an opportunity to explore different libraries, while staying in the Java ecosystem where I'm most comfortable.
 
