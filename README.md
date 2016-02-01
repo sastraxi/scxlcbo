@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sastraxi/scxlcbo.svg?branch=master)](https://travis-ci.org/sastraxi/scxlcbo)
+
 I used this project as an opportunity to explore different libraries, while staying in the Java ecosystem where I'm most comfortable.
 
 Notes on my solution:
