@@ -9,12 +9,9 @@
             font-family: sans-serif;
             color: #333;
 
-
-
             background-image: url('/images/background-600.png');
             background-repeat: repeat-both;
             background-attachment: fixed;
-
         }
 
         #suggestion-wrap {
@@ -119,7 +116,7 @@
             padding: 20px;
         }
 
-        #history {
+        #history, #most-expensive-beer {
             margin: 0 auto;
             border-spacing: 0;
             width: 900px;
@@ -152,6 +149,14 @@
                 text-align: right;
             }
 
+        #most-expensive-beer {
+            padding: 10px 10px !important;
+        }
+
+        #most-expensive-beer span + span:before {
+            content: " - ";
+        }
+
     </style>
 
 </head>
@@ -182,6 +187,16 @@
 
     <#if history?has_content>
         <div id="history-wrap">
+
+            <#if mostExpensiveBeer??>
+                <h2>Most Expensive Beer</h2>
+                <div id="most-expensive-beer">
+                    <span class="name">${mostExpensiveBeer.name}</span>
+                    <span class="style">${mostExpensiveBeer.style}</span>
+                    <span class="price">${mostExpensiveBeer.mL} mL / ${(mostExpensiveBeer.cadPrice)?string.currency}</span>
+                </div>
+            </#if>
+
             <h2>Suggestion History</h2>
             <table id="history">
                 <tbody>

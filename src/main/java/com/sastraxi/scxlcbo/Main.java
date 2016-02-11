@@ -89,6 +89,7 @@ public class Main {
                     attributes.put("beer", randomBeer);
                     attributes.put("message", TRY_AGAIN_TEXT[random.nextInt(TRY_AGAIN_TEXT.length)]);
                 }
+                attributes.put("mostExpensiveBeer", db.getMostExpensiveBeer());
                 attributes.put("history", db.getHistory().entrySet());
                 attributes.put("dateTimeFormatter", DateTimeFormatter.ofPattern("EEE, MMM d 'at' h:mm a"));
                 return freeMarkerEngine.render(new ModelAndView(attributes, "suggestion.ftl"));

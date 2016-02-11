@@ -15,17 +15,22 @@ import java.util.*;
 public class DatabaseServiceMemory implements DatabaseService {
 
     TreeMap<OffsetDateTime, Beer> history;
+    Beer mostExpensiveBeer;
     HashSet<Long> seenProducts;
 
     public DatabaseServiceMemory() {
         history = new TreeMap<>();
         seenProducts = new HashSet<>();
+        mostExpensiveBeer = null;
     }
 
     @Override
     public void addHistory(Beer beer) throws DatabaseException {
         history.put(OffsetDateTime.now(), beer);
         seenProducts.add(beer.getProductNumber());
+        if (mostExpensiveBeer == null || beer.getCadCents() > mostExpensiveBeer.getCadCents()) {
+            mostExpensiveBeer = beer;
+        }
     }
 
     @Override
@@ -36,6 +41,11 @@ public class DatabaseServiceMemory implements DatabaseService {
     @Override
     public NavigableMap<OffsetDateTime, Beer> getHistory() throws DatabaseException {
         return history.descendingMap();
+    }
+
+    @Override
+    public Beer getMostExpensiveBeer() {
+        return mostExpensiveBeer;
     }
 
     @Override

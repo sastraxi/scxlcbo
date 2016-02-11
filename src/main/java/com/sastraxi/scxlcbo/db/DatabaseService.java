@@ -17,7 +17,7 @@ public interface DatabaseService {
      * @param beer the beer that has just been suggested.
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
-    public void addHistory(Beer beer) throws DatabaseException;
+    void addHistory(Beer beer) throws DatabaseException;
 
     /**
      * Queries whether or not a beer has been suggested before.
@@ -26,7 +26,7 @@ public interface DatabaseService {
      * @return true iff the given beer has been suggested before
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
-    public boolean isBeerInHistory(long productNumber) throws DatabaseException;
+    boolean isBeerInHistory(long productNumber) throws DatabaseException;
 
     /**
      * Grab the history of suggested beers.
@@ -34,12 +34,19 @@ public interface DatabaseService {
      * @return a sorted (newest to oldest) map of timestamps (UTC; when the beer suggestion was made) to suggested beer
      * @throws DatabaseException upon any failure to communicate properly with the database.
      */
-    public NavigableMap<OffsetDateTime, Beer> getHistory() throws DatabaseException;
+    NavigableMap<OffsetDateTime, Beer> getHistory() throws DatabaseException;
 
+    /**
+     * Grab the history record of the most-expensive beer ever suggested.
+     *
+     * @return the Beer suggested.
+     * @throws DatabaseException upon any failure to communicate properly with the database.
+     */
+    Beer getMostExpensiveBeer() throws DatabaseException;
 
     /**
      * Destroy and re-build the database.
      */
-    public void reset() throws DatabaseException;
+    void reset() throws DatabaseException;
 
 }

@@ -27,9 +27,13 @@ public class DatabaseServiceRethink implements DatabaseService {
     private static final String DATABASE = "scxlcbo";
     private static final String TABLE_HISTORY = "beer_history";
     private static final String FIELD_PRODUCT_NUMBER = "productNumber";
+    private static final String FIELD_CAD_CENTS = "cadCents";
+    private static final String FIELD_NEGATIVE_CAD_CENTS = "negativeCadCents";
     private static final String FIELD_TIMESTAMP = "tstamp";
 
     public static final RethinkDB r = RethinkDB.r;
+
+    private Beer mostExpensiveBeer;
 
     private final String hostname;
     private final int port;
@@ -68,12 +72,13 @@ public class DatabaseServiceRethink implements DatabaseService {
             OffsetDateTime utcTimestamp = OffsetDateTime.now(ZoneOffset.UTC);
 
             r.db(DATABASE).table(TABLE_HISTORY).insert(
-                r.hashMap(FIELD_PRODUCT_NUMBER, beer.getProductNumber())
-                 .with(FIELD_TIMESTAMP, utcTimestamp)
-                 .with("name", beer.getName())
-                 .with("style", beer.getStyle())
-                 .with("cadCents", beer.getCadCents())
-                 .with("mL", beer.getmL()))
+                    r.hashMap(FIELD_PRODUCT_NUMBER, beer.getProductNumber())
+                            .with(FIELD_TIMESTAMP, utcTimestamp)
+                            .with("name", beer.getName())
+                            .with("style", beer.getStyle())
+                            .with(FIELD_CAD_CENTS, beer.getCadCents())
+                            .with(FIELD_NEGATIVE_CAD_CENTS, -beer.getCadCents())
+                            .with("mL", beer.getmL()))
             .run(conn);
 
         } catch (TimeoutException e) {
@@ -99,6 +104,24 @@ public class DatabaseServiceRethink implements DatabaseService {
         } catch (TimeoutException e) {
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    /**
+     * Builds a Beer object from a database response.
+     *
+     * @param obj JSON object from RethinkDB
+     * @return a historical Beer
+     */
+    private Beer beerFromJSON(JSONObject obj) {
+        return new Beer(
+                obj.getLong(FIELD_PRODUCT_NUMBER),
+                obj.getString("name"),
+                obj.getString("style"),
+                null,
+                null,
+                obj.getLong(FIELD_CAD_CENTS),
+                obj.getLong("mL")
+        );
     }
 
     /**
@@ -130,19 +153,32 @@ public class DatabaseServiceRethink implements DatabaseService {
                                 .withZoneSameInstant(ZoneId.systemDefault())
                                 .toOffsetDateTime();
 
-                results.put(localOffsetDateTime,
-                    new Beer(
-                        next.getLong(FIELD_PRODUCT_NUMBER),
-                        next.getString("name"),
-                        next.getString("style"),
-                        null,
-                        null,
-                        next.getLong("cadCents"),
-                        next.getLong("mL")
-                    ));
+                results.put(localOffsetDateTime, beerFromJSON(next));
             }
 
             return results.descendingMap();
+
+        } catch (TimeoutException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Beer getMostExpensiveBeer() throws DatabaseException {
+        try {
+            // TODO: investigate why rethinkdb is not ordering by our given (asc/desc)
+            // it's only ever doing ascending order, which is why we have to store negative price
+            Connection conn = getConnection();
+            ArrayList<HashMap> cursor = r.db(DATABASE)
+                    .table(TABLE_HISTORY)
+                    .orderBy().optArg("index", r.asc(FIELD_NEGATIVE_CAD_CENTS))
+                    .orderBy(FIELD_NEGATIVE_CAD_CENTS)
+                    .limit(1)
+                    .run(conn, HashMap.class);
+
+            Object result = cursor.get(0);
+            JSONObject obj = new JSONObject((HashMap) result);
+            return beerFromJSON(obj);
 
         } catch (TimeoutException e) {
             throw new DatabaseException(e.getMessage());
@@ -167,6 +203,9 @@ public class DatabaseServiceRethink implements DatabaseService {
             // we'll be ordering by timestamp so might as well index
             // product number is indexed for free (above) as it's the primary key
             r.db(DATABASE).table(TABLE_HISTORY).indexCreate(FIELD_TIMESTAMP).run(conn);
+
+            // add an index on price to get the most-expensive beer
+            r.db(DATABASE).table(TABLE_HISTORY).indexCreate(FIELD_NEGATIVE_CAD_CENTS).run(conn);
 
         } catch (TimeoutException e) {
             throw new DatabaseException(e.getMessage());
